@@ -21,9 +21,11 @@ def generate_data(n_examples, n_timesteps, predict, freq=None):
     time_y = np.empty((n_examples, predict))
     
     for i in range(n_examples):
-
-        if freq == None:
+        
+        # If this condition is met, allows generation of random frequency data for test set
+        if freq is None:
             freq = np.random.rand() * 3
+        # Else train on specific frequency data
         else:
             freq = freq
 
