@@ -8,12 +8,13 @@ for learning_rate in [1, 1E-1,1E-2, 1E-3, 1E-4, 1E-5]:
     hparam_str = "{}".format(learning_rate)
 
     tf.reset_default_graph()
-    writer = tf.summary.FileWriter('scripts/' + hparam_str)
-
+    writer = tf.summary.FileWriter('scripts/' + hparam_str)  # Write to tensorboard to visualise model
+        
+    # Parameters
     n_hidden = 150
     n_outputs = 50  # How much of a window we want to be predicted
     n_inputs = 1  # Number of inputs for each time step
-    n_timesteps = 100
+    n_timesteps = 100 # How much input data is given per example
     EPOCHS = 150
     n_examples_training = 256
     n_examples_test = 3
@@ -29,11 +30,13 @@ for learning_rate in [1, 1E-1,1E-2, 1E-3, 1E-4, 1E-5]:
     # Create variables
     weights = tf.get_variable("weights", initializer=tf.random_normal([n_hidden, n_outputs]))
     bias = tf.get_variable("bias", initializer=tf.random_normal([n_outputs]))
-
+    
+    # Create placeholders for Tensorflow dataset api
     features = tf.placeholder(tf.float32, [None, n_timesteps, n_inputs])
     labels = tf.placeholder(tf.float32, [None, n_outputs])
     batch_size = tf.placeholder(tf.int64)
-
+    
+    # Initialise Tensorflow dataset api
     dataset = tf.data.Dataset.from_tensor_slices((features, labels)).batch(batch_size)
     iterator = dataset.make_initializable_iterator()
     x, y = iterator.get_next()
@@ -41,13 +44,17 @@ for learning_rate in [1, 1E-1,1E-2, 1E-3, 1E-4, 1E-5]:
     with tf.name_scope("LSTM") as scope:
         cell = tf.contrib.rnn.LSTMCell(n_hidden)
         outputs, states = tf.nn.dynamic_rnn(cell, x, dtype=tf.float32)
-        outputs = tf.transpose(outputs, [1, 0,
-                                         2])  # Change dimensions of outputs from [batch_size, timesteps, n_inputs] -> [timesteps, batch_size, n_inputs]
-        last = tf.gather(outputs, int(outputs.get_shape()[
-                                          0]) - 1)  # Take slice along the first axis. In this case we want output of last timestep = no. timesteps - 1 due to how indexing works
+        
+        # Change dimensions of outputs from [batch_size, timesteps, n_inputs] -> [timesteps, batch_size, n_inputs]
+        outputs = tf.transpose(outputs, [1, 0, 2]) 
+        
+        # Take slice along the first axis. In this case we want output of last timestep, i.e. index 0 due
+        # to how indexing works in Python
+        last = tf.gather(outputs, int(outputs.get_shape()[0]) - 1)  
 
         # Note that the following gives same output as 'last' without all the hardwork of
         # transpose and gather (shown for information). (Can be checked by last-last_ = 0)
+        # Used the previous just for reference of how to use 'tf.gather'
         last_ = states.h
 
     with tf.name_scope("prediction") as scope:
@@ -60,7 +67,7 @@ for learning_rate in [1, 1E-1,1E-2, 1E-3, 1E-4, 1E-5]:
         cost = tf.reduce_mean(tf.reduce_sum(tf.squared_difference(prediction, y)))
         optimizer = tf.train.AdamOptimizer(learning_rate)
         train = optimizer.minimize(cost)
-        tf.summary.scalar('cross_entropy', cost)
+        tf.summary.scalar('cross_entropy', cost)  # Keep note of cost during training to be reviewed later
 
     # Initialise all variables
     init = tf.global_variables_initializer()
