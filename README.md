@@ -8,10 +8,10 @@ The main component of this model is the use of a LSTM cell.
 
 Images of how different learning rates effected the performance of the model can be seen below.
  
-This image shows the model performing with a 0.0001 learning rate.
+The image below shows the model performing with a **0.0001** learning rate.
 ![alt text](https://github.com/Tsdevendra1/time-series-analysis/blob/master/graphs/0.0001.png)
 
-This image shows the model performing with a 0.001 learning rate.
+The image below shows the model performing with a **0.001** learning rate.
 ![alt text](https://github.com/Tsdevendra1/time-series-analysis/blob/master/graphs/0.001.png)
 
 Examples of other learning rates can be seen in:
