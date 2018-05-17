@@ -89,12 +89,10 @@ for learning_rate in [1, 1E-1,1E-2, 1E-3, 1E-4, 1E-5]:
         plt.show(block=False)
 
         sess.run(iterator.initializer, feed_dict={features: test_x, labels: test_y, batch_size: n_examples_test})
-
+        
+        # Get prediction for test set
         prediction_test = sess.run(prediction)
-        # print(prediction_test.shape)
-        # plt.plot(test_time_x.T, variable.T,test_time_y.T, prediction_test.T)
-        # plt.show()
-
+     
         subplot_figure = plt.figure(1)
         plt.subplot(311)
         plt.plot(test_time_x[0,:].T, variable[0,:].T,test_time_y[0,:].T, prediction_test[0,:].T)
