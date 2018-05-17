@@ -1,4 +1,4 @@
-# time-series-analysis
+# Sin Wave time series analysis
 
 This repository contains a tensorflow model to perform time series analysis.
 
